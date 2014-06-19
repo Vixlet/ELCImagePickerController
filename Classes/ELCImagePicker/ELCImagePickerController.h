@@ -5,6 +5,7 @@
 //  Created by ELC on 9/9/10.
 //  Copyright 2010 ELC Technologies. All rights reserved.
 //
+//  Modified by gp
 
 #import <UIKit/UIKit.h>
 #import "ELCAssetSelectionDelegate.h"
@@ -43,6 +44,9 @@
 
 - (id)initImagePicker;
 - (void)cancelImagePicker;
+
+// doesn't update image for already presented controllers
+- (void)setSelectionOverlayImage:(UIImage *)image;
 
 @end
 

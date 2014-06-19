@@ -4,6 +4,7 @@
 //  Created by ELC on 2/15/11.
 //  Copyright 2011 ELC Technologies. All rights reserved.
 //
+//  Modified by gp
 
 #import "ELCAssetTablePicker.h"
 #import "ELCAssetCell.h"
@@ -13,6 +14,7 @@
 @interface ELCAssetTablePicker ()
 
 @property (nonatomic, assign) int columns;
+@property (nonatomic, strong) UIImage *selectionOverlayImage;
 
 @end
 
@@ -124,6 +126,14 @@
     [self.parent selectedAssets:selectedAssetsImages];
 }
 
+- (void)setSelectionOverlayImage:(UIImage *)image {
+    if (image != _selectionOverlayImage) {
+        _selectionOverlayImage = image;
+        for (ELCAssetCell *cell in self.tableView.visibleCells) {
+            [cell setSelectionOverlayImage:_selectionOverlayImage];
+        }
+    }
+}
 
 - (BOOL)shouldSelectAsset:(ELCAsset *)asset
 {
@@ -189,7 +199,8 @@
     if (cell == nil) {		        
         cell = [[ELCAssetCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
-    
+
+    [cell setSelectionOverlayImage:_selectionOverlayImage];
     [cell setAssets:[self assetsForIndexPath:indexPath]];
     
     return cell;

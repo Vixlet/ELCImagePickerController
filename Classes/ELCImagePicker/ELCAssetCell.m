@@ -4,6 +4,7 @@
 //  Created by ELC on 2/15/11.
 //  Copyright 2011 ELC Technologies. All rights reserved.
 //
+//  Modified by gp
 
 #import "ELCAssetCell.h"
 #import "ELCAsset.h"
@@ -13,6 +14,7 @@
 @property (nonatomic, strong) NSArray *rowAssets;
 @property (nonatomic, strong) NSMutableArray *imageViewArray;
 @property (nonatomic, strong) NSMutableArray *overlayViewArray;
+@property (nonatomic, strong) UIImage *selectionOverlayImage;
 
 @end
 
@@ -46,7 +48,6 @@
         [view removeFromSuperview];
 	}
     //set up a pointer here so we don't keep calling [UIImage imageNamed:] if creating overlays
-    UIImage *overlayImage = nil;
     for (int i = 0; i < [_rowAssets count]; ++i) {
 
         ELCAsset *asset = [_rowAssets objectAtIndex:i];
@@ -63,12 +64,18 @@
             UIImageView *overlayView = [_overlayViewArray objectAtIndex:i];
             overlayView.hidden = asset.selected ? NO : YES;
         } else {
-            if (overlayImage == nil) {
-                overlayImage = [UIImage imageNamed:@"Overlay.png"];
-            }
-            UIImageView *overlayView = [[UIImageView alloc] initWithImage:overlayImage];
+            UIImageView *overlayView = [[UIImageView alloc] initWithImage:_selectionOverlayImage];
             [_overlayViewArray addObject:overlayView];
             overlayView.hidden = asset.selected ? NO : YES;
+        }
+    }
+}
+
+- (void)setSelectionOverlayImage:(UIImage *)image {
+    if (image != _selectionOverlayImage) {
+        _selectionOverlayImage = image;
+        for (UIImageView *imageView in _overlayViewArray) {
+            imageView.image = _selectionOverlayImage;
         }
     }
 }

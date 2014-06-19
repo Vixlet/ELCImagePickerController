@@ -5,6 +5,7 @@
 //  Created by ELC on 9/9/10.
 //  Copyright 2010 ELC Technologies. All rights reserved.
 //
+//  Modified by gp
 
 #import "ELCImagePickerController.h"
 #import "ELCAsset.h"
@@ -20,7 +21,8 @@
 - (id)initImagePicker
 {
     ELCAlbumPickerController *albumPicker = [[ELCAlbumPickerController alloc] initWithStyle:UITableViewStylePlain];
-    
+    [albumPicker setSelectionOverlayImage:[UIImage imageNamed:@"Overlay"]];
+
     self = [super initWithRootViewController:albumPicker];
     if (self) {
         self.maximumImagesCount = 4;
@@ -43,6 +45,15 @@
 	if ([_imagePickerDelegate respondsToSelector:@selector(elcImagePickerControllerDidCancel:)]) {
 		[_imagePickerDelegate performSelector:@selector(elcImagePickerControllerDidCancel:) withObject:self];
 	}
+}
+
+- (void)setSelectionOverlayImage:(UIImage *)image {
+    if (self.viewControllers.count > 0) {
+        ELCAlbumPickerController *rootController = [self.viewControllers objectAtIndex:0];
+        if ([rootController isKindOfClass:[ELCAlbumPickerController class]]) {
+            [rootController setSelectionOverlayImage:image];
+        }
+    }
 }
 
 - (BOOL)shouldSelectAsset:(ELCAsset *)asset previousCount:(NSUInteger)previousCount
