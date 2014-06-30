@@ -45,8 +45,7 @@
 - (id)initImagePicker;
 - (void)cancelImagePicker;
 
-// doesn't update image for already presented controllers
 - (void)setSelectionOverlayImage:(UIImage *)image;
+- (void)setAssetsFilter:(ALAssetsFilter *)assetsFilter;
 
 @end
-

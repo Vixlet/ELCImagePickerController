@@ -22,6 +22,7 @@
 {
     ELCAlbumPickerController *albumPicker = [[ELCAlbumPickerController alloc] initWithStyle:UITableViewStylePlain];
     [albumPicker setSelectionOverlayImage:[UIImage imageNamed:@"Overlay"]];
+    [albumPicker setAssetsFilter:[ALAssetsFilter allPhotos]];
 
     self = [super initWithRootViewController:albumPicker];
     if (self) {
@@ -48,10 +49,21 @@
 }
 
 - (void)setSelectionOverlayImage:(UIImage *)image {
-    if (self.viewControllers.count > 0) {
-        ELCAlbumPickerController *rootController = [self.viewControllers objectAtIndex:0];
-        if ([rootController isKindOfClass:[ELCAlbumPickerController class]]) {
-            [rootController setSelectionOverlayImage:image];
+    for (UIViewController *controller in self.viewControllers) {
+        if ([controller isKindOfClass:[ELCAlbumPickerController class]]) {
+            [(ELCAlbumPickerController *)controller setSelectionOverlayImage:image];
+        } else if ([controller isKindOfClass:[ELCAlbumPickerController class]]) {
+            [(ELCAssetTablePicker *)controller setSelectionOverlayImage:image];
+        }
+    }
+}
+
+- (void)setAssetsFilter:(ALAssetsFilter *)assetsFilter {
+    for (UIViewController *controller in self.viewControllers) {
+        if ([controller isKindOfClass:[ELCAlbumPickerController class]]) {
+            [(ELCAlbumPickerController *)controller setAssetsFilter:assetsFilter];
+        } else if ([controller isKindOfClass:[ELCAlbumPickerController class]]) {
+            [(ELCAssetTablePicker *)controller setAssetsFilter:assetsFilter];
         }
     }
 }

@@ -14,6 +14,7 @@
 
 @property (nonatomic, strong) ALAssetsLibrary *library;
 @property (nonatomic, strong) UIImage *selectionOverlayImage;
+@property (nonatomic, strong) ALAssetsFilter *assetsFilter;
 
 @end
 
@@ -23,6 +24,11 @@
 
 - (void)setSelectionOverlayImage:(UIImage *)image {
     _selectionOverlayImage = image;
+}
+
+- (void)setAssetsFilter:(ALAssetsFilter *)assetsFilter {
+    _assetsFilter = assetsFilter;
+    [self.tableView reloadRowsAtIndexPaths:[self.tableView indexPathsForVisibleRows] withRowAnimation:UITableViewRowAnimationNone];
 }
 
 #pragma mark -
@@ -54,7 +60,7 @@
                 if (group == nil) {
                     return;
                 }
-                
+
                 // added fix for camera albums order
                 NSString *sGroupPropertyName = (NSString *)[group valueForProperty:ALAssetsGroupPropertyName];
                 NSUInteger nType = [[group valueForProperty:ALAssetsGroupPropertyType] intValue];
@@ -130,12 +136,12 @@
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
-    
+
     // Get count
     ALAssetsGroup *g = (ALAssetsGroup*)[self.assetGroups objectAtIndex:indexPath.row];
-    [g setAssetsFilter:[ALAssetsFilter allPhotos]];
+    [g setAssetsFilter:self.assetsFilter];
     NSInteger gCount = [g numberOfAssets];
-    
+
     cell.textLabel.text = [NSString stringWithFormat:@"%@ (%ld)",[g valueForProperty:ALAssetsGroupPropertyName], (long)gCount];
     [cell.imageView setImage:[UIImage imageWithCGImage:[(ALAssetsGroup*)[self.assetGroups objectAtIndex:indexPath.row] posterImage]]];
 	[cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
@@ -153,7 +159,8 @@
     [picker setSelectionOverlayImage:self.selectionOverlayImage];
 
     picker.assetGroup = [self.assetGroups objectAtIndex:indexPath.row];
-    [picker.assetGroup setAssetsFilter:[ALAssetsFilter allPhotos]];
+    [picker.assetGroup setAssetsFilter:self.assetsFilter];
+    [picker setAssetsFilter:self.assetsFilter];
     
 	picker.assetPickerFilterDelegate = self.assetPickerFilterDelegate;
 	
