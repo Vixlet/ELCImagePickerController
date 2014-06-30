@@ -30,6 +30,7 @@
 - (void)doneAction:(id)sender;
 
 - (void)setSelectionOverlayImage:(UIImage *)image;
+- (void)setVideoOverlayImage:(UIImage *)image;
 - (void)setAssetsFilter:(ALAssetsFilter *)filter;
 
 @end

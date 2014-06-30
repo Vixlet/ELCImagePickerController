@@ -14,6 +14,7 @@
 
 @property (nonatomic, strong) ALAssetsLibrary *library;
 @property (nonatomic, strong) UIImage *selectionOverlayImage;
+@property (nonatomic, strong) UIImage *videoOverlayImage;
 @property (nonatomic, strong) ALAssetsFilter *assetsFilter;
 
 @end
@@ -24,6 +25,10 @@
 
 - (void)setSelectionOverlayImage:(UIImage *)image {
     _selectionOverlayImage = image;
+}
+
+- (void)setVideoOverlayImage:(UIImage *)image {
+    _videoOverlayImage = image;
 }
 
 - (void)setAssetsFilter:(ALAssetsFilter *)assetsFilter {
@@ -157,7 +162,7 @@
 	ELCAssetTablePicker *picker = [[ELCAssetTablePicker alloc] initWithNibName: nil bundle: nil];
 	picker.parent = self;
     [picker setSelectionOverlayImage:self.selectionOverlayImage];
-
+    
     picker.assetGroup = [self.assetGroups objectAtIndex:indexPath.row];
     [picker.assetGroup setAssetsFilter:self.assetsFilter];
     [picker setAssetsFilter:self.assetsFilter];

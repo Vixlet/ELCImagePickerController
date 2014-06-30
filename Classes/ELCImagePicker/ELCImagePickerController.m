@@ -58,6 +58,16 @@
     }
 }
 
+- (void)setVideoOverlayImage:(UIImage *)image {
+    for (UIViewController *controller in self.viewControllers) {
+        if ([controller isKindOfClass:[ELCAlbumPickerController class]]) {
+            [(ELCAlbumPickerController *)controller setVideoOverlayImage:image];
+        } else if ([controller isKindOfClass:[ELCAlbumPickerController class]]) {
+            [(ELCAssetTablePicker *)controller setVideoOverlayImage:image];
+        }
+    }
+}
+
 - (void)setAssetsFilter:(ALAssetsFilter *)assetsFilter {
     for (UIViewController *controller in self.viewControllers) {
         if ([controller isKindOfClass:[ELCAlbumPickerController class]]) {

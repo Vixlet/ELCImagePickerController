@@ -8,6 +8,7 @@
 
 #import "ELCAssetCell.h"
 #import "ELCAsset.h"
+#import "VXResources.h"
 
 @interface ELCAssetCell ()
 
@@ -15,6 +16,7 @@
 @property (nonatomic, strong) NSMutableArray *imageViewArray;
 @property (nonatomic, strong) NSMutableArray *overlayViewArray;
 @property (nonatomic, strong) UIImage *selectionOverlayImage;
+@property (nonatomic, strong) UIImage *videoOverlayImage;
 
 @end
 
@@ -80,6 +82,10 @@
     }
 }
 
+- (void)setVideoOverlayImage:(UIImage *)image {
+    _videoOverlayImage = image;
+}
+
 - (void)cellTapped:(UITapGestureRecognizer *)tapRecognizer
 {
     CGPoint point = [tapRecognizer locationInView:self];
@@ -111,6 +117,13 @@
 		UIImageView *imageView = [_imageViewArray objectAtIndex:i];
 		[imageView setFrame:frame];
 		[self addSubview:imageView];
+        
+        if([[[(ELCAsset *)[_rowAssets objectAtIndex:i] asset] valueForProperty:@"ALAssetPropertyType"] isEqualToString:ALAssetTypeVideo]){
+            UIImageView *playButtonView = [[UIImageView alloc] initWithImage:_videoOverlayImage];
+            [playButtonView setFrame:CGRectMake(frame.origin.x, frame.origin.y, 20, 20)];
+            playButtonView.center = CGPointMake(frame.origin.x+(frame.size.width/2), frame.origin.y+(frame.size.height/2));
+            [self addSubview:playButtonView];
+        }
         
         UIImageView *overlayView = [_overlayViewArray objectAtIndex:i];
         [overlayView setFrame:frame];

@@ -20,6 +20,7 @@
 @property (nonatomic, weak) id<ELCAssetPickerFilterDelegate> assetPickerFilterDelegate;
 // doesn't update image for already presented controllers
 - (void)setSelectionOverlayImage:(UIImage *)image;
+- (void)setVideoOverlayImage:(UIImage *)image;
 - (void)setAssetsFilter:(ALAssetsFilter *)assetsFilter;
 
 @end

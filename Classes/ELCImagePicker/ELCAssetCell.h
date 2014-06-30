@@ -13,5 +13,6 @@
 
 - (void)setAssets:(NSArray *)assets;
 - (void)setSelectionOverlayImage:(UIImage *)image;
+- (void)setVideoOverlayImage:(UIImage *)image;
 
 @end

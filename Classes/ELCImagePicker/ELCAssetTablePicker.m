@@ -183,6 +183,15 @@
     }
 }
 
+- (void)setVideoOverlayImage:(UIImage *)image {
+    if (image != _selectionOverlayImage) {
+        _selectionOverlayImage = image;
+        for (ELCAssetCell *cell in self.tableView.visibleCells) {
+            [cell setVideoOverlayImage:_selectionOverlayImage];
+        }
+    }
+}
+
 - (void)setAssetsFilter:(ALAssetsFilter *)filter {
     _assetsFilter = filter;
     [self preparePhotos];

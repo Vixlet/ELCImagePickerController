@@ -46,6 +46,7 @@
 - (void)cancelImagePicker;
 
 - (void)setSelectionOverlayImage:(UIImage *)image;
+- (void)setVideoOverlayImage:(UIImage *)image;
 - (void)setAssetsFilter:(ALAssetsFilter *)assetsFilter;
 
 @end
