@@ -15,6 +15,7 @@
 
 @property (nonatomic, assign) int columns;
 @property (nonatomic, strong) UIImage *selectionOverlayImage;
+@property (nonatomic, strong) UIImage *videoOverlayImage;
 @property (nonatomic, strong) ALAssetsFilter *assetsFilter;
 @property (nonatomic, strong) NSLock *preparePhotosLock;
 @property (nonatomic, assign) BOOL preparePhotosWhenPossible;
@@ -184,10 +185,11 @@
 }
 
 - (void)setVideoOverlayImage:(UIImage *)image {
+    NSLog(@"setting image");
     if (image != _selectionOverlayImage) {
-        _selectionOverlayImage = image;
+        _videoOverlayImage = image;
         for (ELCAssetCell *cell in self.tableView.visibleCells) {
-            [cell setVideoOverlayImage:_selectionOverlayImage];
+            [cell setVideoOverlayImage:_videoOverlayImage];
         }
     }
 }
@@ -261,7 +263,8 @@
     if (cell == nil) {
         cell = [[ELCAssetCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
-
+    
+    [cell setVideoOverlayImage:_videoOverlayImage];
     [cell setSelectionOverlayImage:_selectionOverlayImage];
     [cell setAssets:[self assetsForIndexPath:indexPath]];
 

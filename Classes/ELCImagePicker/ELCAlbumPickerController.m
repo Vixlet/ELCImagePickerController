@@ -162,7 +162,7 @@
 	ELCAssetTablePicker *picker = [[ELCAssetTablePicker alloc] initWithNibName: nil bundle: nil];
 	picker.parent = self;
     [picker setSelectionOverlayImage:self.selectionOverlayImage];
-    
+    [picker setVideoOverlayImage:self.videoOverlayImage];
     picker.assetGroup = [self.assetGroups objectAtIndex:indexPath.row];
     [picker.assetGroup setAssetsFilter:self.assetsFilter];
     [picker setAssetsFilter:self.assetsFilter];
