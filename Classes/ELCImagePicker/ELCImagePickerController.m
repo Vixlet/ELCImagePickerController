@@ -5,7 +5,6 @@
 //  Created by ELC on 9/9/10.
 //  Copyright 2010 ELC Technologies. All rights reserved.
 //
-//  Modified by gp
 
 #import "ELCImagePickerController.h"
 #import "ELCAsset.h"
@@ -13,6 +12,8 @@
 #import "ELCAssetTablePicker.h"
 #import "ELCAlbumPickerController.h"
 #import <CoreLocation/CoreLocation.h>
+#import <MobileCoreServices/UTCoreTypes.h>
+#import "ELCConsole.h"
 
 @implementation ELCImagePickerController
 
@@ -21,41 +22,37 @@
 - (id)initImagePicker
 {
     ELCAlbumPickerController *albumPicker = [[ELCAlbumPickerController alloc] initWithStyle:UITableViewStylePlain];
-    [albumPicker setSelectionOverlayImage:[UIImage imageNamed:@"Overlay"]];
-    [albumPicker setAssetsFilter:[ALAssetsFilter allPhotos]];
-
+    
     self = [super initWithRootViewController:albumPicker];
     if (self) {
         self.maximumImagesCount = 4;
+        self.returnsImage = YES;
+        self.returnsOriginalImage = YES;
         [albumPicker setParent:self];
+        self.mediaTypes = @[(NSString *)kUTTypeImage, (NSString *)kUTTypeMovie];
     }
     return self;
 }
 
 - (id)initWithRootViewController:(UIViewController *)rootViewController
 {
+
     self = [super initWithRootViewController:rootViewController];
     if (self) {
         self.maximumImagesCount = 4;
+        self.returnsImage = YES;
     }
     return self;
 }
 
-- (void)cancelImagePicker
+- (ELCAlbumPickerController *)albumPicker
 {
-	if ([_imagePickerDelegate respondsToSelector:@selector(elcImagePickerControllerDidCancel:)]) {
-		[_imagePickerDelegate performSelector:@selector(elcImagePickerControllerDidCancel:) withObject:self];
-	}
+    return self.viewControllers[0];
 }
 
-- (void)setSelectionOverlayImage:(UIImage *)image {
-    for (UIViewController *controller in self.viewControllers) {
-        if ([controller isKindOfClass:[ELCAlbumPickerController class]]) {
-            [(ELCAlbumPickerController *)controller setSelectionOverlayImage:image];
-        } else if ([controller isKindOfClass:[ELCAlbumPickerController class]]) {
-            [(ELCAssetTablePicker *)controller setSelectionOverlayImage:image];
-        }
-    }
+- (void)setMediaTypes:(NSArray *)mediaTypes
+{
+    self.albumPicker.mediaTypes = mediaTypes;
 }
 
 - (void)setVideoOverlayImage:(UIImage *)image {
@@ -68,14 +65,16 @@
     }
 }
 
-- (void)setAssetsFilter:(ALAssetsFilter *)assetsFilter {
-    for (UIViewController *controller in self.viewControllers) {
-        if ([controller isKindOfClass:[ELCAlbumPickerController class]]) {
-            [(ELCAlbumPickerController *)controller setAssetsFilter:assetsFilter];
-        } else if ([controller isKindOfClass:[ELCAlbumPickerController class]]) {
-            [(ELCAssetTablePicker *)controller setAssetsFilter:assetsFilter];
-        }
-    }
+- (NSArray *)mediaTypes
+{
+    return self.albumPicker.mediaTypes;
+}
+
+- (void)cancelImagePicker
+{
+	if ([_imagePickerDelegate respondsToSelector:@selector(elcImagePickerControllerDidCancel:)]) {
+		[_imagePickerDelegate performSelector:@selector(elcImagePickerControllerDidCancel:) withObject:self];
+	}
 }
 
 - (BOOL)shouldSelectAsset:(ELCAsset *)asset previousCount:(NSUInteger)previousCount
@@ -93,11 +92,17 @@
     return shouldSelect;
 }
 
+- (BOOL)shouldDeselectAsset:(ELCAsset *)asset previousCount:(NSUInteger)previousCount;
+{
+    return YES;
+}
+
 - (void)selectedAssets:(NSArray *)assets
 {
 	NSMutableArray *returnArray = [[NSMutableArray alloc] init];
 	
-	for(ALAsset *asset in assets) {
+	for(ELCAsset *elcasset in assets) {
+        ALAsset *asset = elcasset.asset;
 		id obj = [asset valueForProperty:ALAssetPropertyType];
 		if (!obj) {
 			continue;
@@ -115,21 +120,24 @@
         ALAssetRepresentation *assetRep = [asset defaultRepresentation];
 
         if(assetRep != nil) {
-            CGImageRef imgRef = nil;
-            //defaultRepresentation returns image as it appears in photo picker, rotated and sized,
-            //so use UIImageOrientationUp when creating our image below.
-            UIImageOrientation orientation = UIImageOrientationUp;
+            if (_returnsImage) {
+                CGImageRef imgRef = nil;
+                //defaultRepresentation returns image as it appears in photo picker, rotated and sized,
+                //so use UIImageOrientationUp when creating our image below.
+                UIImageOrientation orientation = UIImageOrientationUp;
             
-            if (_returnsOriginalImage) {
-                imgRef = [assetRep fullResolutionImage];
-                orientation = (UIImageOrientation)[assetRep orientation];
-            } else {
-                imgRef = [assetRep fullScreenImage];
+                if (_returnsOriginalImage) {
+                    imgRef = [assetRep fullResolutionImage];
+                    orientation = [assetRep orientation];
+                } else {
+                    imgRef = [assetRep fullScreenImage];
+                }
+                UIImage *img = [UIImage imageWithCGImage:imgRef
+                                                   scale:1.0f
+                                             orientation:orientation];
+                [workingDictionary setObject:img forKey:UIImagePickerControllerOriginalImage];
             }
-            UIImage *img = [UIImage imageWithCGImage:imgRef
-                                               scale:1.0f
-                                         orientation:orientation];
-            [workingDictionary setObject:img forKey:UIImagePickerControllerOriginalImage];
+
             [workingDictionary setObject:[[asset valueForProperty:ALAssetPropertyURLs] valueForKey:[[[asset valueForProperty:ALAssetPropertyURLs] allKeys] objectAtIndex:0]] forKey:UIImagePickerControllerReferenceURL];
             [workingDictionary setObject:asset forKey:@"ECLImagePickerAsset"];
 
@@ -151,6 +159,16 @@
     } else {
         return toInterfaceOrientation != UIInterfaceOrientationPortraitUpsideDown;
     }
+}
+
+- (BOOL)onOrder
+{
+    return [[ELCConsole mainConsole] onOrder];
+}
+
+- (void)setOnOrder:(BOOL)onOrder
+{
+    [[ELCConsole mainConsole] setOnOrder:onOrder];
 }
 
 @end

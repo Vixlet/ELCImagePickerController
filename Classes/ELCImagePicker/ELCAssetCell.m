@@ -4,18 +4,18 @@
 //  Created by ELC on 2/15/11.
 //  Copyright 2011 ELC Technologies. All rights reserved.
 //
-//  Modified by gp
 
 #import "ELCAssetCell.h"
 #import "ELCAsset.h"
 #import "VXResources.h"
+#import "ELCConsole.h"
+#import "ELCOverlayImageView.h"
 
 @interface ELCAssetCell ()
 
 @property (nonatomic, strong) NSArray *rowAssets;
 @property (nonatomic, strong) NSMutableArray *imageViewArray;
 @property (nonatomic, strong) NSMutableArray *overlayViewArray;
-@property (nonatomic, strong) UIImage *selectionOverlayImage;
 @property (nonatomic, strong) UIImage *videoOverlayImage;
 
 @end
@@ -46,10 +46,11 @@
 	for (UIImageView *view in _imageViewArray) {
         [view removeFromSuperview];
 	}
-    for (UIImageView *view in _overlayViewArray) {
+    for (ELCOverlayImageView *view in _overlayViewArray) {
         [view removeFromSuperview];
 	}
     //set up a pointer here so we don't keep calling [UIImage imageNamed:] if creating overlays
+    UIImage *overlayImage = nil;
     for (int i = 0; i < [_rowAssets count]; ++i) {
 
         ELCAsset *asset = [_rowAssets objectAtIndex:i];
@@ -63,21 +64,15 @@
         }
         
         if (i < [_overlayViewArray count]) {
-            UIImageView *overlayView = [_overlayViewArray objectAtIndex:i];
+            ELCOverlayImageView *overlayView = [_overlayViewArray objectAtIndex:i];
             overlayView.hidden = asset.selected ? NO : YES;
         } else {
-            UIImageView *overlayView = [[UIImageView alloc] initWithImage:_selectionOverlayImage];
+            if (overlayImage == nil) {
+                overlayImage = [UIImage imageNamed:@"Overlay.png"];
+            }
+            ELCOverlayImageView *overlayView = [[ELCOverlayImageView alloc] initWithImage:overlayImage];
             [_overlayViewArray addObject:overlayView];
             overlayView.hidden = asset.selected ? NO : YES;
-        }
-    }
-}
-
-- (void)setSelectionOverlayImage:(UIImage *)image {
-    if (image != _selectionOverlayImage) {
-        _selectionOverlayImage = image;
-        for (UIImageView *imageView in _overlayViewArray) {
-            imageView.image = _selectionOverlayImage;
         }
     }
 }
@@ -85,11 +80,11 @@
 - (void)setVideoOverlayImage:(UIImage *)image {
     _videoOverlayImage = image;
 }
-
 - (void)cellTapped:(UITapGestureRecognizer *)tapRecognizer
 {
     CGPoint point = [tapRecognizer locationInView:self];
-    CGFloat totalWidth = self.rowAssets.count * 75 + (self.rowAssets.count - 1) * 4;
+    int c = (int32_t)self.rowAssets.count;
+    CGFloat totalWidth = c * 75 + (c - 1) * 4;
     CGFloat startX = (self.bounds.size.width - totalWidth) / 2;
     
 	CGRect frame = CGRectMake(startX, 2, 75, 75);
@@ -98,8 +93,17 @@
         if (CGRectContainsPoint(frame, point)) {
             ELCAsset *asset = [_rowAssets objectAtIndex:i];
             asset.selected = !asset.selected;
-            UIImageView *overlayView = [_overlayViewArray objectAtIndex:i];
+            ELCOverlayImageView *overlayView = [_overlayViewArray objectAtIndex:i];
             overlayView.hidden = !asset.selected;
+            if (asset.selected) {
+                asset.index = [[ELCConsole mainConsole] currIndex];
+                [overlayView setIndex:asset.index+1];
+                [[ELCConsole mainConsole] addIndex:asset.index];
+            }
+            else
+            {
+                [[ELCConsole mainConsole] removeIndex:asset.index];
+            }
             break;
         }
         frame.origin.x = frame.origin.x + frame.size.width + 4;
@@ -107,8 +111,9 @@
 }
 
 - (void)layoutSubviews
-{    
-    CGFloat totalWidth = self.rowAssets.count * 75 + (self.rowAssets.count - 1) * 4;
+{
+    int c = (int32_t)self.rowAssets.count;
+    CGFloat totalWidth = c * 75 + (c - 1) * 4;
     CGFloat startX = (self.bounds.size.width - totalWidth) / 2;
     
 	CGRect frame = CGRectMake(startX, 2, 75, 75);
@@ -124,8 +129,7 @@
             playButtonView.center = CGPointMake(frame.origin.x+(frame.size.width/2), frame.origin.y+(frame.size.height/2));
             [self addSubview:playButtonView];
         }
-        
-        UIImageView *overlayView = [_overlayViewArray objectAtIndex:i];
+        ELCOverlayImageView *overlayView = [_overlayViewArray objectAtIndex:i];
         [overlayView setFrame:frame];
         [self addSubview:overlayView];
 		

@@ -4,18 +4,16 @@
 //  Created by ELC on 2/15/11.
 //  Copyright 2011 ELC Technologies. All rights reserved.
 //
-//  Modified by gp
 
 #import "ELCAlbumPickerController.h"
 #import "ELCImagePickerController.h"
 #import "ELCAssetTablePicker.h"
+#import <MobileCoreServices/UTCoreTypes.h>
 
 @interface ELCAlbumPickerController ()
 
 @property (nonatomic, strong) ALAssetsLibrary *library;
-@property (nonatomic, strong) UIImage *selectionOverlayImage;
 @property (nonatomic, strong) UIImage *videoOverlayImage;
-@property (nonatomic, strong) ALAssetsFilter *assetsFilter;
 
 @end
 
@@ -23,19 +21,9 @@
 
 //Using auto synthesizers
 
-- (void)setSelectionOverlayImage:(UIImage *)image {
-    _selectionOverlayImage = image;
-}
-
 - (void)setVideoOverlayImage:(UIImage *)image {
     _videoOverlayImage = image;
 }
-
-- (void)setAssetsFilter:(ALAssetsFilter *)assetsFilter {
-    _assetsFilter = assetsFilter;
-    [self.tableView reloadRowsAtIndexPaths:[self.tableView indexPathsForVisibleRows] withRowAnimation:UITableViewRowAnimationNone];
-}
-
 #pragma mark -
 #pragma mark View lifecycle
 
@@ -65,7 +53,7 @@
                 if (group == nil) {
                     return;
                 }
-
+                
                 // added fix for camera albums order
                 NSString *sGroupPropertyName = (NSString *)[group valueForProperty:ALAssetsGroupPropertyName];
                 NSUInteger nType = [[group valueForProperty:ALAssetsGroupPropertyType] intValue];
@@ -110,9 +98,30 @@
     return [self.parent shouldSelectAsset:asset previousCount:previousCount];
 }
 
+- (BOOL)shouldDeselectAsset:(ELCAsset *)asset previousCount:(NSUInteger)previousCount
+{
+    return [self.parent shouldDeselectAsset:asset previousCount:previousCount];
+}
+
 - (void)selectedAssets:(NSArray*)assets
 {
 	[_parent selectedAssets:assets];
+}
+
+- (ALAssetsFilter *)assetFilter
+{
+    if([self.mediaTypes containsObject:(NSString *)kUTTypeImage] && [self.mediaTypes containsObject:(NSString *)kUTTypeMovie])
+    {
+        return [ALAssetsFilter allAssets];
+    }
+    else if([self.mediaTypes containsObject:(NSString *)kUTTypeMovie])
+    {
+        return [ALAssetsFilter allVideos];
+    }
+    else
+    {
+        return [ALAssetsFilter allPhotos];
+    }
 }
 
 #pragma mark -
@@ -141,12 +150,12 @@
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
-
+    
     // Get count
     ALAssetsGroup *g = (ALAssetsGroup*)[self.assetGroups objectAtIndex:indexPath.row];
-    [g setAssetsFilter:self.assetsFilter];
+    [g setAssetsFilter:[self assetFilter]];
     NSInteger gCount = [g numberOfAssets];
-
+    
     cell.textLabel.text = [NSString stringWithFormat:@"%@ (%ld)",[g valueForProperty:ALAssetsGroupPropertyName], (long)gCount];
     [cell.imageView setImage:[UIImage imageWithCGImage:[g posterImage]]];
 	[cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
@@ -159,13 +168,13 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
 	ELCAssetTablePicker *picker = [[ELCAssetTablePicker alloc] initWithNibName: nil bundle: nil];
 	picker.parent = self;
-    [picker setSelectionOverlayImage:self.selectionOverlayImage];
     [picker setVideoOverlayImage:self.videoOverlayImage];
+
     picker.assetGroup = [self.assetGroups objectAtIndex:indexPath.row];
-    [picker.assetGroup setAssetsFilter:self.assetsFilter];
-    [picker setAssetsFilter:self.assetsFilter];
+    [picker.assetGroup setAssetsFilter:[self assetFilter]];
     
 	picker.assetPickerFilterDelegate = self.assetPickerFilterDelegate;
 	
