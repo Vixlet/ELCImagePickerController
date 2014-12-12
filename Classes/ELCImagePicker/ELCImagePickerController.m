@@ -128,7 +128,7 @@
             
                 if (_returnsOriginalImage) {
                     imgRef = [assetRep fullResolutionImage];
-                    orientation = [assetRep orientation];
+                    orientation = (UIImageOrientation)[assetRep orientation];
                 } else {
                     imgRef = [assetRep fullScreenImage];
                 }
@@ -139,8 +139,7 @@
             }
 
             [workingDictionary setObject:[[asset valueForProperty:ALAssetPropertyURLs] valueForKey:[[[asset valueForProperty:ALAssetPropertyURLs] allKeys] objectAtIndex:0]] forKey:UIImagePickerControllerReferenceURL];
-            [workingDictionary setObject:asset forKey:@"ECLImagePickerAsset"];
-
+            
             [returnArray addObject:workingDictionary];
         }
 		

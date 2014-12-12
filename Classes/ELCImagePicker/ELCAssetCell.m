@@ -36,6 +36,8 @@
         
         NSMutableArray *overlayArray = [[NSMutableArray alloc] initWithCapacity:4];
         self.overlayViewArray = overlayArray;
+        
+        self.alignmentLeft = YES;
 	}
 	return self;
 }
@@ -66,6 +68,7 @@
         if (i < [_overlayViewArray count]) {
             ELCOverlayImageView *overlayView = [_overlayViewArray objectAtIndex:i];
             overlayView.hidden = asset.selected ? NO : YES;
+            overlayView.labIndex.text = [NSString stringWithFormat:@"%d", asset.index + 1];
         } else {
             if (overlayImage == nil) {
                 overlayImage = [UIImage imageNamed:@"Overlay.png"];
@@ -73,6 +76,7 @@
             ELCOverlayImageView *overlayView = [[ELCOverlayImageView alloc] initWithImage:overlayImage];
             [_overlayViewArray addObject:overlayView];
             overlayView.hidden = asset.selected ? NO : YES;
+            overlayView.labIndex.text = [NSString stringWithFormat:@"%d", asset.index + 1];
         }
     }
 }
@@ -85,7 +89,13 @@
     CGPoint point = [tapRecognizer locationInView:self];
     int c = (int32_t)self.rowAssets.count;
     CGFloat totalWidth = c * 75 + (c - 1) * 4;
-    CGFloat startX = (self.bounds.size.width - totalWidth) / 2;
+    CGFloat startX;
+    
+    if (self.alignmentLeft) {
+        startX = 4;
+    }else {
+        startX = (self.bounds.size.width - totalWidth) / 2;
+    }
     
 	CGRect frame = CGRectMake(startX, 2, 75, 75);
 	
@@ -96,13 +106,14 @@
             ELCOverlayImageView *overlayView = [_overlayViewArray objectAtIndex:i];
             overlayView.hidden = !asset.selected;
             if (asset.selected) {
-                asset.index = [[ELCConsole mainConsole] currIndex];
+                asset.index = [[ELCConsole mainConsole] numOfSelectedElements];
                 [overlayView setIndex:asset.index+1];
                 [[ELCConsole mainConsole] addIndex:asset.index];
             }
             else
             {
-                [[ELCConsole mainConsole] removeIndex:asset.index];
+                int lastElement = [[ELCConsole mainConsole] numOfSelectedElements] - 1;
+                [[ELCConsole mainConsole] removeIndex:lastElement];
             }
             break;
         }
@@ -114,7 +125,13 @@
 {
     int c = (int32_t)self.rowAssets.count;
     CGFloat totalWidth = c * 75 + (c - 1) * 4;
-    CGFloat startX = (self.bounds.size.width - totalWidth) / 2;
+    CGFloat startX;
+    
+    if (self.alignmentLeft) {
+        startX = 4;
+    }else {
+        startX = (self.bounds.size.width - totalWidth) / 2;
+    }
     
 	CGRect frame = CGRectMake(startX, 2, 75, 75);
 	
