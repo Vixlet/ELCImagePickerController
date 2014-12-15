@@ -102,7 +102,13 @@
 	for (int i = 0; i < [_rowAssets count]; ++i) {
         if (CGRectContainsPoint(frame, point)) {
             ELCAsset *asset = [_rowAssets objectAtIndex:i];
+            BOOL beforeValue = asset.selected;
             asset.selected = !asset.selected;
+            
+            if(asset.selected == beforeValue) {
+                return;
+            }
+            
             ELCOverlayImageView *overlayView = [_overlayViewArray objectAtIndex:i];
             overlayView.hidden = !asset.selected;
             if (asset.selected) {
