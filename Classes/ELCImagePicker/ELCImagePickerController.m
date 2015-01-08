@@ -81,8 +81,8 @@
 {
     BOOL shouldSelect = previousCount < self.maximumImagesCount;
     if (!shouldSelect) {
-        NSString *title = [NSString stringWithFormat:NSLocalizedString(@"Only %d photos please!", nil), self.maximumImagesCount];
-        NSString *message = [NSString stringWithFormat:NSLocalizedString(@"You can only send %d photos at a time.", nil), self.maximumImagesCount];
+        NSString *title = [NSString stringWithFormat:NSLocalizedString(@"Sorry", nil), self.maximumImagesCount];
+        NSString *message = [NSString stringWithFormat:NSLocalizedString(@"You may only pick up to %d photo(s)", nil), self.maximumImagesCount];
         [[[UIAlertView alloc] initWithTitle:title
                                     message:message
                                    delegate:nil

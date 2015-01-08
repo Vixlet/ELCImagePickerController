@@ -51,7 +51,7 @@
         // Group enumerator Block
             void (^assetGroupEnumerator)(ALAssetsGroup *, BOOL *) = ^(ALAssetsGroup *group, BOOL *stop) 
             {
-                if (group == nil) {
+                if (group == nil || [self isICloudAlbum:group]) {
                     return;
                 }
                 
@@ -105,6 +105,12 @@
 - (void)viewWillDisappear:(BOOL)animated {
     
     [[NSNotificationCenter defaultCenter] removeObserver:self name:ALAssetsLibraryChangedNotification object:nil];
+}
+
+- (BOOL)isICloudAlbum:(ALAssetsGroup*)group {
+    NSNumber *groupType = [group valueForProperty:ALAssetsGroupPropertyType];
+    
+    return ([groupType intValue] & ALAssetsGroupPhotoStream) ? YES : NO;
 }
 
 - (void)reloadTableView
