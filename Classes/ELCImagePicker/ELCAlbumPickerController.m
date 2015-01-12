@@ -51,7 +51,7 @@
         // Group enumerator Block
             void (^assetGroupEnumerator)(ALAssetsGroup *, BOOL *) = ^(ALAssetsGroup *group, BOOL *stop) 
             {
-                if (group == nil || [self isICloudAlbum:group]) {
+                if (group == nil) {
                     return;
                 }
                 
