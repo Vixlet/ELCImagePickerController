@@ -81,8 +81,19 @@
 {
     BOOL shouldSelect = previousCount < self.maximumImagesCount;
     if (!shouldSelect) {
-        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Only 5 photos please!",@"Upload error alert message")
-                                    message:NSLocalizedString(@"You can only upload 5 photos at a time",@"Error message while upload more than 5 items")
+        NSString *photoString;
+        
+        if(self.maximumImagesCount != 1) {
+            photoString = @"photos";
+        } else {
+            photoString = @"photo";
+        }
+        
+        NSString *title = [NSString stringWithFormat:NSLocalizedString(@"Only %d %@ please!", nil), self.maximumImagesCount, photoString];
+        NSString *message = [NSString stringWithFormat:NSLocalizedString(@"You may only select %d %@", nil), self.maximumImagesCount, photoString];
+        
+        [[[UIAlertView alloc] initWithTitle:title
+                                    message:message
                                    delegate:nil
                           cancelButtonTitle:NSLocalizedString(@"Ok",@"Option for cancel the alert message")
                           otherButtonTitles:nil] show];
