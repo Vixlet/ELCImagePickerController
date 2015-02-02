@@ -106,6 +106,11 @@
     return YES;
 }
 
+- (void)setMaximumImagesCount:(NSInteger)maximumImagesCount {
+    _maximumImagesCount = maximumImagesCount;
+    [[ELCConsole mainConsole] setMaximumImagesCount:maximumImagesCount];
+}
+
 - (void)selectedAssets:(NSArray *)assets
 {
 	NSMutableArray *returnArray = [[NSMutableArray alloc] init];

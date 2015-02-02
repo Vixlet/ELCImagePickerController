@@ -8,6 +8,7 @@
 #import "ELCAlbumPickerController.h"
 #import "ELCImagePickerController.h"
 #import "ELCAssetTablePicker.h"
+#import "ELCAssetCollectionPicker.h"
 #import <MobileCoreServices/UTCoreTypes.h>
 
 @interface ELCAlbumPickerController ()
@@ -208,10 +209,14 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	ELCAssetTablePicker *picker = [[ELCAssetTablePicker alloc] initWithNibName: nil bundle: nil];
-	picker.parent = self;
+//	ELCAssetTablePicker *picker = [[ELCAssetTablePicker alloc] initWithNibName: nil bundle: nil];
+//	picker.parent = self;
+//    [picker setVideoOverlayImage:self.videoOverlayImage];
+    
+    ELCAssetCollectionPicker *picker = [[ELCAssetCollectionPicker alloc] init];
     [picker setVideoOverlayImage:self.videoOverlayImage];
-
+    picker.parent = self;
+    
     picker.assetGroup = [self.assetGroups objectAtIndex:indexPath.row];
     [picker.assetGroup setAssetsFilter:[self assetFilter]];
     

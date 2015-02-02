@@ -203,7 +203,7 @@
         [(NSObject *)self.parent performSelector:@selector(selectedAssets:) withObject:singleAssetArray afterDelay:0];
     }
     
-    int numOfSelectedElements = [[ELCConsole mainConsole] numOfSelectedElements];
+    NSUInteger numOfSelectedElements = [[ELCConsole mainConsole] numOfSelectedElements];
     if (asset.index < numOfSelectedElements - 1) {
         NSMutableArray *arrayOfCellsToReload = [[NSMutableArray alloc] initWithCapacity:1];
         

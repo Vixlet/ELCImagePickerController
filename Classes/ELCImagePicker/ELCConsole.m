@@ -11,6 +11,7 @@
 static ELCConsole *_mainconsole;
 
 @implementation ELCConsole
+
 + (ELCConsole *)mainConsole
 {
     if (!_mainconsole) {
@@ -23,50 +24,51 @@ static ELCConsole *_mainconsole;
 {
     self = [super init];
     if (self) {
-        myIndex = [[NSMutableArray alloc] init];
+        selectedIndexes = [[NSMutableArray alloc] init];
     }
     return self;
 }
 
 - (void)dealloc
 {
-    myIndex = nil;
+    selectedIndexes = nil;
     _mainconsole = nil;
 }
 
-- (void)addIndex:(int)index
+- (void)addIndex:(NSUInteger)index
 {
-    if (![myIndex containsObject:@(index)]) {
-        [myIndex addObject:@(index)];
+    if (![selectedIndexes containsObject:@(index)]) {
+        [selectedIndexes addObject:@(index)];
     }
 }
 
-- (void)removeIndex:(int)index
+- (void)removeIndex:(NSUInteger)index
 {
-    [myIndex removeObject:@(index)];
+    [selectedIndexes removeObject:@(index)];
 }
 
 - (void)removeAllIndex
 {
-    [myIndex removeAllObjects];
+    [selectedIndexes removeAllObjects];
 }
 
-- (int)currIndex
+- (NSUInteger)currIndex
 {
-    [myIndex sortUsingSelector:@selector(compare:)];
+    [selectedIndexes sortUsingSelector:@selector(compare:)];
     
-    for (int i = 0; i < [myIndex count]; i++) {
-        int c = [[myIndex objectAtIndex:i] intValue];
+    for (int i = 0; i < [selectedIndexes count]; i++) {
+        int c = [[selectedIndexes objectAtIndex:i] intValue];
         if (c != i) {
             return i;
         }
     }
-    return (int)[myIndex count];
+    return [selectedIndexes count];
 }
 
-- (int)numOfSelectedElements {
+- (NSUInteger)numOfSelectedElements {
     
-    return [myIndex count];
+    return [selectedIndexes count];
 }
+
 
 @end

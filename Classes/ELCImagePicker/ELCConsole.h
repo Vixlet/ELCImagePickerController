@@ -10,13 +10,16 @@
 
 @interface ELCConsole : NSObject
 {
-    NSMutableArray *myIndex;
+    NSMutableArray *selectedIndexes;
 }
 @property (nonatomic,assign) BOOL onOrder;
+@property (nonatomic) NSUInteger maximumImagesCount;
+
 + (ELCConsole *)mainConsole;
-- (void)addIndex:(int)index;
-- (void)removeIndex:(int)index;
-- (int)currIndex;
-- (int)numOfSelectedElements;
+- (void)addIndex:(NSUInteger)index;
+- (void)removeIndex:(NSUInteger)index;
+- (NSUInteger)currIndex;
+- (NSUInteger)numOfSelectedElements;
 - (void)removeAllIndex;
+
 @end

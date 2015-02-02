@@ -13,7 +13,7 @@
 //Using auto synthesizers
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"ELCAsset index:%d",self.index];
+    return [NSString stringWithFormat:@"ELCAsset index: %lu", (unsigned long)self.index];
 }
 
 - (id)initWithAsset:(ALAsset*)asset

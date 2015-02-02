@@ -28,8 +28,8 @@
 {
     self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier];
 	if (self) {
-        UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(cellTapped:)];
-        [self addGestureRecognizer:tapRecognizer];
+        //UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(cellTapped:)];
+       // [self addGestureRecognizer:tapRecognizer];
         
         NSMutableArray *mutableArray = [[NSMutableArray alloc] initWithCapacity:4];
         self.imageViewArray = mutableArray;
@@ -68,7 +68,7 @@
         if (i < [_overlayViewArray count]) {
             ELCOverlayImageView *overlayView = [_overlayViewArray objectAtIndex:i];
             overlayView.hidden = asset.selected ? NO : YES;
-            overlayView.labIndex.text = [NSString stringWithFormat:@"%d", asset.index + 1];
+            overlayView.labIndex.text = [NSString stringWithFormat:@"%lu", asset.index + 1];
         } else {
             if (overlayImage == nil) {
                 overlayImage = [UIImage imageNamed:@"Overlay.png"];
@@ -76,7 +76,7 @@
             ELCOverlayImageView *overlayView = [[ELCOverlayImageView alloc] initWithImage:overlayImage];
             [_overlayViewArray addObject:overlayView];
             overlayView.hidden = asset.selected ? NO : YES;
-            overlayView.labIndex.text = [NSString stringWithFormat:@"%d", asset.index + 1];
+            overlayView.labIndex.text = [NSString stringWithFormat:@"%lu", asset.index + 1];
         }
     }
 }
@@ -84,6 +84,7 @@
 - (void)setVideoOverlayImage:(UIImage *)image {
     _videoOverlayImage = image;
 }
+
 - (void)cellTapped:(UITapGestureRecognizer *)tapRecognizer
 {
     CGPoint point = [tapRecognizer locationInView:self];
@@ -114,11 +115,11 @@
             if (asset.selected) {
                 asset.index = [[ELCConsole mainConsole] numOfSelectedElements];
                 [overlayView setIndex:asset.index+1];
-                [[ELCConsole mainConsole] addIndex:asset.index];
+                //[[ELCConsole mainConsole] addIndex:asset.index];
             }
             else
             {
-                int lastElement = [[ELCConsole mainConsole] numOfSelectedElements] - 1;
+                NSUInteger lastElement = [[ELCConsole mainConsole] numOfSelectedElements] - 1;
                 [[ELCConsole mainConsole] removeIndex:lastElement];
             }
             break;
