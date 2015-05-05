@@ -128,7 +128,7 @@
 - (BOOL)shouldSelectAsset:(ELCAsset *)asset {
     BOOL shouldSelect;
    
-    if(self.selectedIndexPaths.count < [[ELCConsole mainConsole] maximumImagesCount]) {
+    if(self.selectedIndexPaths.count < 1) { //[[ELCConsole mainConsole] maximumImagesCount]) {
         shouldSelect = YES;
     }
     
@@ -175,24 +175,34 @@
             [self.selectedIndexPaths addObject:indexPath];
             [cell setIsSelected:YES];
         } else {
-            NSString *photoString;
+//            NSString *photoString;
+//            
+//            if([[ELCConsole mainConsole] maximumImagesCount] != 1) {
+//                photoString = @"photos";
+//            } else {
+//                photoString = @"photo";
+//            }
+//            
+//            NSString *title = [NSString stringWithFormat:NSLocalizedString(@"Only %d %@ please!", nil), [[ELCConsole mainConsole] maximumImagesCount], photoString];
+//            NSString *message = [NSString stringWithFormat:NSLocalizedString(@"You may only select %d %@", nil), [[ELCConsole mainConsole] maximumImagesCount], photoString];
+//            
+//            [[[UIAlertView alloc] initWithTitle:title
+//                                        message:message
+//                                       delegate:nil
+//                              cancelButtonTitle:NSLocalizedString(@"Ok",@"Option for cancel the alert message")
+//                              otherButtonTitles:nil] show];
+//        }
             
-            if([[ELCConsole mainConsole] maximumImagesCount] != 1) {
-                photoString = @"photos";
-            } else {
-                photoString = @"photo";
+            for(NSIndexPath *path in self.selectedIndexPaths) {
+                ELCAssetCollectionCell *cell = (ELCAssetCollectionCell *)[self.collectionView cellForItemAtIndexPath:path];
+                [cell setIsSelected:NO];
             }
             
-            NSString *title = [NSString stringWithFormat:NSLocalizedString(@"Only %d %@ please!", nil), [[ELCConsole mainConsole] maximumImagesCount], photoString];
-            NSString *message = [NSString stringWithFormat:NSLocalizedString(@"You may only select %d %@", nil), [[ELCConsole mainConsole] maximumImagesCount], photoString];
+            [self.selectedIndexPaths removeAllObjects];
             
-            [[[UIAlertView alloc] initWithTitle:title
-                                        message:message
-                                       delegate:nil
-                              cancelButtonTitle:NSLocalizedString(@"Ok",@"Option for cancel the alert message")
-                              otherButtonTitles:nil] show];
+            [self.selectedIndexPaths addObject:indexPath];
+            [cell setIsSelected:YES];
         }
-        
     } else {
         // cell is already selected - deselect it
         [cell setIsSelected:NO];
